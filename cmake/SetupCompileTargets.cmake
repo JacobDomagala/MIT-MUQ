@@ -25,7 +25,14 @@ foreach(libName ${MUQ_TARGETS})
             list(APPEND MUQ_LIBRARIES ${libName})
         endif()
 
-        TARGET_LINK_LIBRARIES(${libName} PUBLIC ${MUQ_LINK_LIBS})
+        TARGET_LINK_LIBRARIES(${libName} PRIVATE ${MUQ_LINK_LIBS})
+
+        # Set the include directories
+        target_include_directories(${libName}
+        PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+        )
 
         # # Add dependencies for any required dependencies that MUQ is going to build internally
         # foreach(depend ${MUQ_REQUIRES})
@@ -42,10 +49,31 @@ foreach(libName ${MUQ_TARGETS})
                     LIBRARY DESTINATION "${PYTHON_INSTALL_PREFIX}/muq"
                     ARCHIVE DESTINATION "${PYTHON_INSTALL_PREFIX}/muq")
         else()
+            # Install the target libraries and executables
             install(TARGETS ${libName}
                     EXPORT ${CMAKE_PROJECT_NAME}Depends
                     LIBRARY DESTINATION "${CMAKE_INSTALL_PREFIX}/lib"
                     ARCHIVE DESTINATION "${CMAKE_INSTALL_PREFIX}/lib")
+
+            # Collect the targets into an export set
+            install(
+                EXPORT ${CMAKE_PROJECT_NAME}Depends       # Export set containing all targets
+                DESTINATION lib/cmake/MUQ                 # Correct path where CMake will look for the config
+                NAMESPACE muq::dev::                      # Namespace for the targets
+                FILE "muqTargets.cmake"                   # Exported CMake file
+                COMPONENT dev                             # This is part of the 'dev' component
+            )
+
+            # Add HDF5 include directories
+            if(HDF5_FOUND)
+                target_include_directories(${libName} PUBLIC $<BUILD_INTERFACE:${HDF5_INCLUDE_DIRS}> $<INSTALL_INTERFACE:include>)
+            endif()
+
+            # Add Eigen3 include directories
+            if(Eigen3_FOUND)
+                target_include_directories(${libName} PUBLIC $<BUILD_INTERFACE:${Eigen3_INCLUDE_DIRS}> $<INSTALL_INTERFACE:include>)
+            endif()
+
         endif()
     endif()
 

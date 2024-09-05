@@ -27,8 +27,8 @@ set(MUQ_HAS_SUNDIALS 0) # needed for preprocessor directives in the MUQ source c
 list (FIND MUQ_REQUIRES SUNDIALS dindex)
 if (${dindex} GREATER -1)
     find_package(SUNDIALS 5.5.0...<6.0.0 REQUIRED)
-    set(MUQ_HAS_SUNDIALS 1) 
-    LIST(APPEND MUQ_LINK_LIBS 
+    set(MUQ_HAS_SUNDIALS 1)
+    LIST(APPEND MUQ_LINK_LIBS
         SUNDIALS::cvodes  SUNDIALS::idas SUNDIALS::kinsol SUNDIALS::nvecserial)
 endif()
 
@@ -61,8 +61,8 @@ endif()
 list (FIND MUQ_REQUIRES BOOST dindex)
 if (${dindex} GREATER -1)
     set(BOOST_MIN_VERSION "1.56.0")
-    find_package(Boost ${BOOST_MIN_VERSION} COMPONENTS system filesystem graph regex)
-    LIST(APPEND MUQ_LINK_LIBS 
+    find_package(Boost ${BOOST_MIN_VERSION} REQUIRED COMPONENTS system filesystem graph regex)
+    LIST(APPEND MUQ_LINK_LIBS
         Boost::system Boost::filesystem Boost::graph Boost::regex)
 endif()
 
@@ -70,8 +70,8 @@ endif()
 # ##### LOOK FOR Parallel Sampling Algorithm dependencies  ######
 # ###############################################################
 
-set(MUQ_HAS_PARCER 0) # needed for preprocessor directives 
-set(MUQ_HAS_OTF2 0)   # needed for preprocessor directives 
+set(MUQ_HAS_PARCER 0) # needed for preprocessor directives
+set(MUQ_HAS_OTF2 0)   # needed for preprocessor directives
 if(MUQ_USE_MPI)
     # PARCER
     find_package(PARCER REQUIRED)
@@ -93,7 +93,7 @@ if(MUQ_USE_MPI)
 
     # spdlog
     find_package(spdlog REQUIRED)
-    LIST(APPEND MUQ_LINK_LIBS spdlog::spdlog)    
+    LIST(APPEND MUQ_LINK_LIBS spdlog::spdlog)
 endif()
 
 ########################################
@@ -101,6 +101,5 @@ endif()
 ########################################
 
 list( REMOVE_DUPLICATES MUQ_EXTERNAL_INCLUDES)
-set(MUQ_EXTERNAL_INCLUDE_DIRS ${MUQ_EXTERNAL_INCLUDES} 
+set(MUQ_EXTERNAL_INCLUDE_DIRS ${MUQ_EXTERNAL_INCLUDES}
     CACHE INTERNAL "List of external include directories for MUQ.")
-

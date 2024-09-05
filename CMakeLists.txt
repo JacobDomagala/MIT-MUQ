@@ -83,6 +83,14 @@ message(STATUS "MUQ_EXPORT_LIBRARIES = ${MUQ_EXPORT_LIBRARIES}")
 
 #export(PACKAGE ${CMAKE_PROJECT_NAME})
 
+# install(
+#   EXPORT                    ${VIRTUAL_TRANSPORT_LIBRARY}
+#   DESTINATION               cmake
+#   NAMESPACE                 muq::dev::
+#   FILE                      "muqTargets.cmake"
+#   COMPONENT                 dev
+# )
+
 # Create the MUQConfig.cmake file
 configure_file(cmake/MUQConfig.cmake.in "${PROJECT_BINARY_DIR}/${CMAKE_PROJECT_NAME}Config.cmake" @ONLY)
 configure_file(cmake/MUQConfig.cmake.in "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${CMAKE_PROJECT_NAME}Config.cmake" @ONLY)

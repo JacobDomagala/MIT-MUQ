@@ -6,12 +6,21 @@
 #  MUQ_INCLUDE_DIRS   - Include directories that MUQ uses
 #  MUQ_COMPILE_DEFINITIONS -Definitions used during compilation (i.e. variables added with add_definitions)
 
+get_filename_component (MUQ_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+include(${MUQ_CMAKE_DIR}/muqTargets.cmake)
+
 include(CMakeFindDependencyMacro)
 if (@OpenMP_CXX_FOUND@)
   find_dependency(OpenMP)
 endif()
 if (@Boost_FOUND@)
-  find_dependency(Boost @BOOST_MIN_VERSION@ COMPONENTS system filesystem graph)
+  find_dependency(Boost HINTS @Boost_DIR@ @BOOST_MIN_VERSION@ COMPONENTS system filesystem graph )
+endif()
+
+if (@HDF5_FOUND@)
+  find_dependency(HDF5 HINTS @HDF5_DIR@ COMPONENTS C CXX HL )
+  set(HDF5_DIR @HDF5_DIR@)
 endif()
 
 set(MUQ_INCLUDE_DIRS @CMAKE_INSTALL_PREFIX@/include @MUQ_EXTERNAL_INCLUDES@)

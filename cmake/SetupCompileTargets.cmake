@@ -25,7 +25,7 @@ foreach(libName ${MUQ_TARGETS})
             list(APPEND MUQ_LIBRARIES ${libName})
         endif()
 
-        TARGET_LINK_LIBRARIES(${libName} PRIVATE ${MUQ_LINK_LIBS})
+        TARGET_LINK_LIBRARIES(${libName} PUBLIC ${MUQ_LINK_LIBS})
 
         # Set the include directories
         target_include_directories(${libName}
@@ -63,17 +63,6 @@ foreach(libName ${MUQ_TARGETS})
                 FILE "muqTargets.cmake"                   # Exported CMake file
                 COMPONENT dev                             # This is part of the 'dev' component
             )
-
-            # Add HDF5 include directories
-            if(HDF5_FOUND)
-                target_include_directories(${libName} PUBLIC $<BUILD_INTERFACE:${HDF5_INCLUDE_DIRS}> $<INSTALL_INTERFACE:include>)
-            endif()
-
-            # Add Eigen3 include directories
-            if(Eigen3_FOUND)
-                target_include_directories(${libName} PUBLIC $<BUILD_INTERFACE:${Eigen3_INCLUDE_DIRS}> $<INSTALL_INTERFACE:include>)
-            endif()
-
         endif()
     endif()
 

@@ -11,8 +11,13 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/include)
 # HDF5
 list (FIND MUQ_REQUIRES HDF5 dindex)
 if (${dindex} GREATER -1)
-    find_package(HDF5 REQUIRED COMPONENTS C CXX HL)
-    LIST(APPEND MUQ_LINK_LIBS hdf5::hdf5 hdf5::hdf5_cpp hdf5::hdf5_hl)
+    set (LIB_TYPE STATIC)
+    string(TOLOWER ${LIB_TYPE} SEARCH_TYPE)
+
+    find_package (HDF5 NAMES hdf5 hdf5_cpp hdf5_hl COMPONENTS C CXX HL ${SEARCH_TYPE})
+
+    set (LINK_LIBS ${LINK_LIBS} ${HDF5_C_${LIB_TYPE}_LIBRARY} ${HDF5_CXX_${LIB_TYPE}_LIBRARY} ${HDF5_HL_${LIB_TYPE}_LIBRARY})
+    LIST(APPEND MUQ_LINK_LIBS ${LINK_LIBS})
 endif()
 
 # NLOPT

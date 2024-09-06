@@ -11,8 +11,13 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/include)
 # HDF5
 list (FIND MUQ_REQUIRES HDF5 dindex)
 if (${dindex} GREATER -1)
-    find_package(HDF5 REQUIRED COMPONENTS C CXX HL)
-    LIST(APPEND MUQ_LINK_LIBS hdf5::hdf5 hdf5::hdf5_cpp hdf5::hdf5_hl)
+    set (LIB_TYPE STATIC)
+    string(TOLOWER ${LIB_TYPE} SEARCH_TYPE)
+
+    find_package (HDF5 NAMES hdf5 hdf5_cpp hdf5_hl COMPONENTS C CXX HL ${SEARCH_TYPE})
+
+    set (LINK_LIBS ${LINK_LIBS} ${HDF5_C_${LIB_TYPE}_LIBRARY} ${HDF5_CXX_${LIB_TYPE}_LIBRARY} ${HDF5_HL_${LIB_TYPE}_LIBRARY})
+    LIST(APPEND MUQ_LINK_LIBS ${LINK_LIBS})
 endif()
 
 # NLOPT
@@ -27,8 +32,8 @@ set(MUQ_HAS_SUNDIALS 0) # needed for preprocessor directives in the MUQ source c
 list (FIND MUQ_REQUIRES SUNDIALS dindex)
 if (${dindex} GREATER -1)
     find_package(SUNDIALS 5.5.0...<6.0.0 REQUIRED)
-    set(MUQ_HAS_SUNDIALS 1) 
-    LIST(APPEND MUQ_LINK_LIBS 
+    set(MUQ_HAS_SUNDIALS 1)
+    LIST(APPEND MUQ_LINK_LIBS
         SUNDIALS::cvodes  SUNDIALS::idas SUNDIALS::kinsol SUNDIALS::nvecserial)
 endif()
 
@@ -61,8 +66,8 @@ endif()
 list (FIND MUQ_REQUIRES BOOST dindex)
 if (${dindex} GREATER -1)
     set(BOOST_MIN_VERSION "1.56.0")
-    find_package(Boost ${BOOST_MIN_VERSION} COMPONENTS system filesystem graph regex)
-    LIST(APPEND MUQ_LINK_LIBS 
+    find_package(Boost ${BOOST_MIN_VERSION} REQUIRED COMPONENTS system filesystem graph regex)
+    LIST(APPEND MUQ_LINK_LIBS
         Boost::system Boost::filesystem Boost::graph Boost::regex)
 endif()
 
@@ -70,8 +75,8 @@ endif()
 # ##### LOOK FOR Parallel Sampling Algorithm dependencies  ######
 # ###############################################################
 
-set(MUQ_HAS_PARCER 0) # needed for preprocessor directives 
-set(MUQ_HAS_OTF2 0)   # needed for preprocessor directives 
+set(MUQ_HAS_PARCER 0) # needed for preprocessor directives
+set(MUQ_HAS_OTF2 0)   # needed for preprocessor directives
 if(MUQ_USE_MPI)
     # PARCER
     find_package(PARCER REQUIRED)
@@ -93,7 +98,7 @@ if(MUQ_USE_MPI)
 
     # spdlog
     find_package(spdlog REQUIRED)
-    LIST(APPEND MUQ_LINK_LIBS spdlog::spdlog)    
+    LIST(APPEND MUQ_LINK_LIBS spdlog::spdlog)
 endif()
 
 ########################################
@@ -101,6 +106,5 @@ endif()
 ########################################
 
 list( REMOVE_DUPLICATES MUQ_EXTERNAL_INCLUDES)
-set(MUQ_EXTERNAL_INCLUDE_DIRS ${MUQ_EXTERNAL_INCLUDES} 
+set(MUQ_EXTERNAL_INCLUDE_DIRS ${MUQ_EXTERNAL_INCLUDES}
     CACHE INTERNAL "List of external include directories for MUQ.")
-
